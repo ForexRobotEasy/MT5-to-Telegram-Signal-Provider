@@ -1,0 +1,82 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                         MT5 to Telegram Signal Provider |
+//|                                         Developer: Forex Robot Easy Team |
+//|                                         Website: forexroboteasy.com |
+//+------------------------------------------------------------------+
+
+// Include necessary libraries
+
+#include <TelegramAPI.mqh>
+#include <TradeAPI.mqh>
+#include <ChartAPI.mqh>
+
+// Define constants
+
+#define TELEGRAM_TOKEN 'your_telegram_token'
+#define TELEGRAM_CHAT_ID 'your_chat_id'
+
+// Establish a connection with Telegram's API and authenticate the user
+
+TelegramAPI telegram(TELEGRAM_TOKEN);
+
+// Send signals to Telegram's chat, channel, or group using the established connection
+
+void SendSignal(string signal)
+{
+    string message = 'Signal: ' + signal;
+
+    // Send message to Telegram
+    telegram.SendMessage(TELEGRAM_CHAT_ID, message);
+
+    // Capture and attach screenshot of the chart
+    ChartCapture();
+}
+
+// Define function to customize order details for different subscription tiers
+
+void CustomizeOrderDetails(int subscriptionTier, string signal)
+{
+    string orderDetails;
+
+    if(subscriptionTier == 1)
+    {
+        orderDetails = 'Subscription Tier 1: ' + signal;
+    }
+    else if(subscriptionTier == 2)
+    {
+        orderDetails = 'Subscription Tier 2: ' + signal;
+    }
+    else if(subscriptionTier == 3)
+    {
+        orderDetails = 'Subscription Tier 3: ' + signal;
+    }
+
+    // Send customized order details to Telegram
+    SendSignal(orderDetails);
+}
+
+// Capture and attach screenshot of the chart to each executed order
+
+void ChartCapture()
+{
+    // Capture screenshot of the chart
+    ChartCapture('screenshot.png');
+
+    // Attach screenshot to the executed order
+    telegram.SendPhoto(TELEGRAM_CHAT_ID, 'screenshot.png');
+}
+
+// Example usage
+
+void OnTick()
+{
+    // Send signal for subscription tier 1
+    CustomizeOrderDetails(1, 'Buy EUR/USD');
+
+    // Send signal for subscription tier 2
+    CustomizeOrderDetails(2, 'Sell GBP/USD');
+
+    // Send signal for subscription tier 3
+    CustomizeOrderDetails(3, 'Buy USD/JPY');
+}
